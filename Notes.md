@@ -79,3 +79,42 @@ there is a thing called testing-pyramid
 
 majority of tests should be **unite-test** beside that you should include a bunch of **integration-tests** to ensure that the your application works fine with it's external dependencies and a few **E2E** tests for the final testing.
 
+**Note**: In the package.json under **scrips** object change **test** from it's default values to **jest** so you can start testing with jest by running this command.
+
+**Naming Convention**: files that ends with _test|spec_ will be executed by **Jest** to run tests.
+
+**Note**: Note: the number of test should be greater than or equal to the number of execution paths
+
+## Unit-Testing
+
+Jest is a popular JavaScript testing framework used for testing JavaScript code, including React applications. In Jest, a "test" is a function that defines a set of assertions to verify that a piece of code behaves as expected. The `test` function is a global function provided by Jest for defining individual test cases.
+
+Here's a basic example of how the `test` function is used in Jest:
+
+```javascript
+// myModule.test.js
+
+const myModule = require('./myModule');
+
+test('adds 1 + 2 to equal 3', () => {
+  expect(myModule.add(1, 2)).toBe(3);
+});
+```
+
+In this example:
+
+1. The `test` function is used to define a test case.
+2. The first argument to the `test` function is a string that describes what the test is checking. In this case, it's checking if the `add` function of `myModule` correctly adds 1 and 2 to equal 3.
+3. The second argument is a function that contains the actual test code. This function typically contains one or more assertions.
+
+Inside the test function, you'll often see the use of Jest's `expect` function along with various matcher functions. Matchers are functions that check whether a value meets certain conditions. In the example, `toBe` is a matcher that checks if the result of `myModule.add(1, 2)` is exactly equal to `3`.
+
+Jest provides a variety of matchers for different types of assertions. Some common ones include:
+
+- `toBe(value)`: Checks if the value is exactly equal to the expected value.
+- `toEqual(value)`: Checks if the value is deeply equal to the expected value.
+- `toBeTruthy()`: Checks if the value is truthy.
+- `toBeFalsy()`: Checks if the value is falsy.
+- `toContain(item)`: Checks if an array or string contains the specified item.
+
+These are just a few examples, and Jest has many more matchers that you can use to create expressive and powerful tests for your JavaScript code.
