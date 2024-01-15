@@ -166,3 +166,23 @@ describe("absolute", () => {
   });
 });
 ```
+
+### Refactor with confidence
+
+With having tests in place you don't need to worry about the code you write unless you change the behavior of your code.
+
+here we're implementing the same logic in different ways keeping the behavior of the function unchanged.
+
+```js
+// Testing Numbers
+module.exports.absolute = function (num) {
+  // if(num > 0)return num;
+  // if(num < 0)return -num;
+  // return 0
+  // change the implementation
+  // if(num >= 0)return num;
+  // return -num
+  // change the implementation
+  return num < 0 ? -num : num;
+};
+```
