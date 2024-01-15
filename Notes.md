@@ -75,7 +75,7 @@ We need all of those test types in our application but the ration between **unit
 
 there is a thing called testing-pyramid
 
-![test pyramid](./Screenshot.png)
+![test pyramid](./assets/testPyramid.png)
 
 majority of tests should be **unite-test** beside that you should include a bunch of **integration-tests** to ensure that the your application works fine with it's external dependencies and a few **E2E** tests for the final testing.
 
@@ -94,9 +94,9 @@ Here's a basic example of how the `test` function is used in Jest:
 ```javascript
 // myModule.test.js
 
-const myModule = require('./myModule');
+const myModule = require("./myModule");
 
-test('adds 1 + 2 to equal 3', () => {
+test("adds 1 + 2 to equal 3", () => {
   expect(myModule.add(1, 2)).toBe(3);
 });
 ```
@@ -118,3 +118,51 @@ Jest provides a variety of matchers for different types of assertions. Some comm
 - `toContain(item)`: Checks if an array or string contains the specified item.
 
 These are just a few examples, and Jest has many more matchers that you can use to create expressive and powerful tests for your JavaScript code.
+
+### Grouping tests
+
+As we write more tests i becomes more and more confusing to to look at and try to figure out what is what, specially for other programmers.
+
+![first class citizens](./assets//testsAreFirstClassCitizens.png)
+
+Note: _if you are gonna write missy and unmaintainable tests it is better to NOT WRITE at all_
+
+```js
+test("absolute - should return a positive number if input is positive", () => {
+  const result = absolute(1);
+  expect(result).toBe(1);
+});
+
+test("absolute - should return positive number if input is negative", () => {
+  const result = absolute(-1);
+  expect(result).toBe(1);
+});
+
+test("absolute - should return 0 if input is 0", () => {
+  const result = absolute(0);
+  expect(result).toBe(0);
+});
+```
+
+Jest provides `describe` function which is used to group related tests, also there is `it` function which replaces `test` function inside `describe` function and makes reading tests a whole lot easier just like plain English.
+
+```js
+const { absolute } = require("./lib");
+
+describe("absolute", () => {
+  it("should return a positive number if input is positive", () => {
+    const result = absolute(1);
+    expect(result).toBe(1);
+  });
+
+  it("should return positive number if input is negative", () => {
+    const result = absolute(-1);
+    expect(result).toBe(1);
+  });
+
+  it("should return 0 if input is 0", () => {
+    const result = absolute(0);
+    expect(result).toBe(0);
+  });
+});
+```
