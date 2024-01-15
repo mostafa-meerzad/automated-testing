@@ -1,4 +1,4 @@
-const { absolute, greet } = require("./lib");
+const { absolute, greet, getCurrencies } = require("./lib");
 
 describe("absolute", () => {
   it("should return a positive number if input is positive", () => {
@@ -26,5 +26,29 @@ describe("greet", () => {
     // ------------------------------------
     // expect(result).toContain("Mostafa");
     expect(result).toMatch(/Mostafa/);
+  });
+});
+
+describe("getCurrencies", () => {
+  it("should return supported currencies", () => {
+    const result = getCurrencies();
+    // too generic tests
+    // these tests passes as log that function returns anything other than "undefined"
+    // expect(result).toBeDefined();
+    // expect(result).not.toBeUndefined();
+    // ----------------------------------------
+    // too specific tests
+    // expect(result.length).toBe(3)
+    // expect(result[0]).toBe("USD");
+    // expect(result[1]).toBe("AUD");
+    // -----------------------------------
+
+    // the proper way
+    // expect(result).toContain("USD");
+    // expect(result).toContain("AUD");
+    // expect(result).toContain("EUR");
+    // -------------------------
+    // the ideal way
+    expect(result).toEqual(expect.arrayContaining(["AUD", "USD", "EUR"])); // this matcher matches any array containing elements provided in the given array
   });
 });

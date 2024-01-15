@@ -212,3 +212,43 @@ describe("greet", () => {
   });
 });
 ```
+
+### Testing Arrays
+
+In testing arrays your tests should neither be too specific nor too general and that is the key to write good and maintainable tests.
+
+`code to be tested`
+
+```js
+module.exports.getCurrencies = function () {
+  return ["USD", "AUD", "EUR"];
+};
+```
+
+`the tests`
+
+```js
+describe("getCurrencies", () => {
+  it("should return supported currencies", () => {
+    const result = getCurrencies();
+    // too generic tests
+    // these tests passes as log that function returns anything other than "undefined"
+    // expect(result).toBeDefined();
+    // expect(result).not.toBeUndefined();
+    // ----------------------------------------
+    // too specific tests
+    // expect(result.length).toBe(3)
+    // expect(result[0]).toBe("USD");
+    // expect(result[1]).toBe("AUD");
+    // -----------------------------------
+
+    // the proper way
+    // expect(result).toContain("USD");
+    // expect(result).toContain("AUD");
+    // expect(result).toContain("EUR");
+    // -------------------------
+    // the ideal way
+    expect(result).toEqual(expect.arrayContaining(["AUD", "USD", "EUR"])); // this matcher matches any array containing elements provided in the given array
+  });
+});
+```
