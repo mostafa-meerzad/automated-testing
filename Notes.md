@@ -127,6 +127,8 @@ As we write more tests i becomes more and more confusing to to look at and try t
 
 Note: _if you are gonna write missy and unmaintainable tests it is better to NOT WRITE at all_
 
+### Testing Numbers
+
 ```js
 test("absolute - should return a positive number if input is positive", () => {
   const result = absolute(1);
@@ -185,4 +187,28 @@ module.exports.absolute = function (num) {
   // change the implementation
   return num < 0 ? -num : num;
 };
+```
+
+### Testing Strings
+
+When testing strings the tests should neither be too specific nor too general
+
+`function to be tested`
+
+```js
+module.exports.greet = function (name) {
+  return "Hello " + name;
+};
+```
+
+`tests`
+
+```js
+describe("greet", () => {
+  it("should return Hello Mostafa", () => {
+    const result = greet("Mostafa");
+    expect(result).toBe("Hello Mostafa");
+    // the value in give to "toBe" checker is too specific and will break with smallest change
+  });
+});
 ```

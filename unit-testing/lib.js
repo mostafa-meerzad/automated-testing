@@ -9,3 +9,7 @@ module.exports.absolute = function(num){
     // change the implementation 
     return num < 0 ? -num : num
 }
+
+module.exports.greet = function(name){
+    return "Hello " + name + "!"
+}
