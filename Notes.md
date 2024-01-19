@@ -271,14 +271,67 @@ the tests
 describe("getProduct", () => {
   it("should return the product with the given id", () => {
     const result = getProduct(1);
-    expect(result).toBe({id:1, price:10}); // this test fails because it compares two similar objects in different locations of memory
+    expect(result).toBe({ id: 1, price: 10 }); // this test fails because it compares two similar objects in different locations of memory
 
-    expect(result).toEqual({id:1, price:10}); // this test checks key-value pairs of each objects to be the same
+    expect(result).toEqual({ id: 1, price: 10 }); // this test checks key-value pairs of each objects to be the same
 
-    expect(result).toMatchObject({ id: 1 });// checks if the provided object has a subset of the given object
+    expect(result).toMatchObject({ id: 1 }); // checks if the provided object has a subset of the given object
 
-    expect(result).toHaveProperty("id", 1);// checks if the provided key-value pair exists on the target object
+    expect(result).toHaveProperty("id", 1); // checks if the provided key-value pair exists on the target object
     expect(result).toHaveProperty("cat", "electronic");
+  });
+});
+```
+
+### Testing Exceptions
+
+for testing exceptions we need to take another approach;
+
+the code
+
+```js
+module.exports.registerUser = function (userName) {
+  if (!userName) throw new Error("userName is required");
+
+  return { id: Date(), userName };
+};
+```
+
+the test
+
+```js
+describe("registerUser", () => {
+  // to properly test this exception we need to run a test on every falsy value in JS:
+  // false
+  // Null
+  // NaN
+  // Undefined
+  // ""
+  // 0
+  it("should throw if userName is falsy", () => {
+    // for testing an exception we need to pass a callback function to the "expect" function which is calling the code that throws an exception and use the "toThrow" matcher function
+    expect(() => {
+      registerUser(false);
+    }).toThrow();
+  });
+});
+```
+
+one thing about the cases that we are dealing with multiple values and need to run the tests on each and every one of them we need to use **Parameterized Tests** this way we don't need to repeat ourselves.
+
+**Note**: Jest doesn't support parameterized tests out of the box.
+
+for that reasons we need to work around it:
+
+```js
+describe("registerUser", () => {
+  it("should throw if userName is falsy", () => {
+    const args = [false, null, undefined, "", 0, NaN];
+    args.forEach((arg) => {
+      expect(() => {
+        registerUser(arg);
+      }).toThrow();
+    });
   });
 });
 ```
