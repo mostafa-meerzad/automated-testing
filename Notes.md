@@ -252,3 +252,33 @@ describe("getCurrencies", () => {
   });
 });
 ```
+
+### Testing Objects
+
+In testing Objects your tests should be neither too specific nor too generic.
+
+the sample code
+
+```js
+module.exports.getProduct = function (productId) {
+  return { id: productId, price: 10, cat: "electronic" };
+};
+```
+
+the tests
+
+```js
+describe("getProduct", () => {
+  it("should return the product with the given id", () => {
+    const result = getProduct(1);
+    expect(result).toBe({id:1, price:10}); // this test fails because it compares two similar objects in different locations of memory
+
+    expect(result).toEqual({id:1, price:10}); // this test checks key-value pairs of each objects to be the same
+
+    expect(result).toMatchObject({ id: 1 });// checks if the provided object has a subset of the given object
+
+    expect(result).toHaveProperty("id", 1);// checks if the provided key-value pair exists on the target object
+    expect(result).toHaveProperty("cat", "electronic");
+  });
+});
+```
