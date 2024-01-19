@@ -335,3 +335,15 @@ describe("registerUser", () => {
   });
 });
 ```
+
+### Continuously Running Tests
+
+To make Jest keep running tests while developing your application you need to add `--watchAll` flag in the **scripts** section of **package.json** file like following:
+
+```json
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+```
+
+now if when you type `npm test` in the terminal **Jest** runs all of your tests at beginning and then watches for changes in your **source** or **test** codes and every time you save changes jest runs all your tests.
