@@ -347,3 +347,54 @@ To make Jest keep running tests while developing your application you need to ad
 ```
 
 now if when you type `npm test` in the terminal **Jest** runs all of your tests at beginning and then watches for changes in your **source** or **test** codes and every time you save changes jest runs all your tests.
+
+### Mocking an external resource call
+
+if the function you are dealing with has some external dependencies we need to mock (fake) those dependencies otherwise we're not writing **unit test** that would be **integration test**.
+
+mocking functions in **vanilla Js** is easy you just need to overwrite it.
+
+this is the function that is calling a database to get a customer and then if user has enough points their order will get 10% discount
+
+```js
+module.exports.applyDiscount = function (order) {
+  const customer = getCustomerSync(order.customerId);
+  if (customer.points > 10) {
+    order.totalPrice *= 0.9;
+  }
+};
+```
+
+we are going to mock this `getCustomerSync` function and it will look exactly like it's original function.
+
+1.  first import the module that contains that function
+
+    ```js
+    const lib = require("./lib");
+    const db = require("./db");
+    ```
+
+2.  overwrite imported function with another function
+
+    ```js
+    describe("apply discount", () => {
+      it("should apply 10% discount if the user has more than 10 points", () => {
+        db.getCustomerSync = function (customerId) {
+          console.log("Fake reading user...");
+          return { id: customerId, points: 11 };
+        };
+        const order = { customerId: 1, totalPrice: 10 };
+        lib.applyDiscount(order);
+        console.log(order.totalPrice);
+        expect(order.totalPrice).toBe(9);
+      });
+    });
+    ```
+
+**Note**: for this kind of mocking functions you need to import the module itself in every place it's functions are being used if you **named import** them in this way `const { getCustomerSync } = require("./db");` and then just use `getCustomerSync` it is not going to work! you must use `lib.getCustomerSync` instead to make it work to have a single place to reference.
+
+**Note**: we mock dependencies because:
+
+- first we are writing unit-tests not integration-tests
+- those dependencies might not be up and running while we run our unit-tests
+- unit-tests will execute much faster

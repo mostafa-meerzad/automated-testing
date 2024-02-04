@@ -4,7 +4,12 @@ const {
   getCurrencies,
   getProduct,
   registerUser,
+  applyDiscount,
 } = require("./lib");
+
+const lib = require("./lib");
+const db = require("./db");
+const mail = require("./mail");
 
 describe("absolute", () => {
   it("should return a positive number if input is positive", () => {
@@ -92,9 +97,44 @@ describe("registerUser", () => {
     });
   });
 
-  it ("should return a user object if valid userName is provided", () => {
+  it("should return a user object if valid userName is provided", () => {
     const result = registerUser("Mostafa");
-    expect(result).toHaveProperty("userName", "Mostafa")
-    expect(result).toMatchObject({userName: "Mostafa"})
-  })
-}); 
+    expect(result).toHaveProperty("userName", "Mostafa");
+    expect(result).toMatchObject({ userName: "Mostafa" });
+  });
+});
+
+describe("applyDiscount", () => {
+  it("should apply 10% discount if the user has more than 10 points", () => {
+    db.getCustomerSync = function (customerId) {
+      // getCustomerSync = function(customerId){
+      console.log("Fake reading user...");
+      return { id: customerId, points: 11 };
+    };
+    const order = { customerId: 1, totalPrice: 10 };
+    lib.applyDiscount(order);
+    // applyDiscount(order)
+    console.log(order.totalPrice);
+    expect(order.totalPrice).toBe(9);
+  });
+});
+
+describe("notifyCustomer", () => {
+  it("should send an email to the customer", () => {
+    // before calling notifyCustomer we need to mock it's dependencies
+    // mock getting user
+    db.getCustomerSync = function (customerId) {
+      // console.log("fake customer")
+      return { email: "fake@fake.com" };
+    };
+    // mock sending email
+    let mailSent = false;
+    mail.send = function (email, message) {
+      mailSent = true;
+      console.log("your order was placed successfully faked");
+    };
+
+    lib.notifyCustomer({ customerId: 1 });
+    expect(mailSent).toBe(true);
+  });
+});
