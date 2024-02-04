@@ -128,7 +128,7 @@ describe("notifyCustomer", () => {
       return { email: "fake@fake.com" };
     };
     // mock sending email
-    let mailSent = false;
+    let mailSent = false; // this is a flag that indicates whether the main.send mock-function actually called or not
     mail.send = function (email, message) {
       mailSent = true;
       console.log("your order was placed successfully faked");
@@ -136,5 +136,19 @@ describe("notifyCustomer", () => {
 
     lib.notifyCustomer({ customerId: 1 });
     expect(mailSent).toBe(true);
+  });
+});
+
+describe("notify customer", () => {
+  it("should send an email to the customer", () => {
+    db.getCustomerSync = jest.fn().mockReturnValue({ email: "test@test.com" });
+
+    mail.send = jest.fn();
+
+    lib.notifyCustomer({ customerId: 1 });
+    // console.log(mail.send.mock.calls[0][1]);
+    expect(mail.send).toHaveBeenCalled();
+    expect(mail.send.mock.calls[0][0]).toMatch("@");
+    expect(mail.send.mock.calls[0][1]).toMatch(/order/);
   });
 });

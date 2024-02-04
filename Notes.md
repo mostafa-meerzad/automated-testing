@@ -398,3 +398,60 @@ we are going to mock this `getCustomerSync` function and it will look exactly li
 - first we are writing unit-tests not integration-tests
 - those dependencies might not be up and running while we run our unit-tests
 - unit-tests will execute much faster
+
+### The Need Of Mocking
+
+Mocking functions is a common practice in writing tests for applications, primarily used to isolate the piece of code being tested and to control the behavior of external dependencies or complex parts of the system. This isolation is crucial for creating reliable and deterministic tests. Here are several reasons why we need to mock functions:
+
+1. **Isolation of the System Under Test**: In unit testing, the goal is often to test pieces of code (units) in isolation from the rest of the system. Mocking allows you to replace dependencies of the unit under test with controlled and predictable implementations. This way, you can ensure the test only evaluates the functionality of the unit itself, not the dependencies.
+
+2. **Control Over External Dependencies**: External dependencies such as databases, network services, or third-party APIs can introduce unpredictability into tests. They may be slow, unreliable, or have their own set of complexities. Mocking these dependencies allows tests to run quickly and reliably, as the external services are simulated rather than actually invoked.
+
+3. **Deterministic Tests**: Tests need to be deterministic, meaning they should produce the same results if run multiple times under the same conditions. External dependencies can cause tests to be flaky or nondeterministic due to variability in their responses or states. By mocking these dependencies, you can ensure the inputs and outputs are consistent, leading to deterministic tests.
+
+4. **Testing Error Conditions**: Mocking allows you to simulate error conditions or edge cases that might be difficult or impossible to trigger with actual dependencies. For example, you can mock a database connection failure or an API returning a 500 error. This helps in ensuring your application can gracefully handle failures.
+
+5. **Simplifying Test Setup**: Setting up real dependencies can be cumbersome and time-consuming. For instance, to test against a real database, you would need to ensure the database is in the expected state before each test runs. Mocking these dependencies simplifies test setup and teardown, making tests easier to write and maintain.
+
+6. **Focusing on the Interface rather than the Implementation**: When you mock a function or a service, you are essentially saying, "Assuming the dependency works as expected, does my code do the right thing?" This allows developers to focus on the interface between components rather than the internal workings of their dependencies.
+
+### How to Mock Functions
+
+Different programming languages and test frameworks offer various tools for mocking. For example:
+
+- In JavaScript, libraries such as Jest provide extensive mocking capabilities, including automatic mocks, manual mocks, and spy functions.
+- In Python, the `unittest.mock` module offers a powerful way to mock objects, allowing you to replace parts of your system under test with mock objects and make assertions about how they have been used.
+- In Java, frameworks like Mockito and JMockit allow developers to create mock objects, specify behaviors, and verify interactions in a straightforward manner.
+
+Using these tools, developers can create mock implementations of functions or services that simulate the behavior of real dependencies, adhering to the principle of testing units of code in isolation.
+
+### Creating mock function with jest
+
+In jest there is a method `jest.fn()` this method returns a mock function when we call it and that mock function is just an implementation of function "a function with no code" which means we can define what it should accept/return:
+
+- mockFunction.mockReturnValue(value): with this method you can set the return value for the mocked function
+- ockFunction.mockResolvedValue("hello"): creates a resolved-promise with the given value
+- mockFunction.mockRejectedValue(new Error("something went WRONG!!!")): creates a rejected-promise with the given value
+
+```js
+const mockFunction = jest.fn();
+mockFunction.mockReturnValue(1);
+console.log(mockFunction());
+```
+
+```js
+describe("notify customer", () => {
+  it("should send an email to the customer", () => {
+    db.getCustomerSync = jest.fn().mockReturnValue({ email: "test@test.com" });
+
+    mail.send = jest
+      .fn()
+      .mockReturnValue("your order was placed successfully: mocked");
+
+    lib.notifyCustomer({ customerId: 1 });
+    expect(mail.send).toHaveBeenCalled(); // this matcher ensures that our mocked function will be called
+    expect(mail.send).toHaveBeenCalledWith("test@test.com", "..."); // if the mocked function needs to receive the exact argument when called
+    
+  });
+});
+```
