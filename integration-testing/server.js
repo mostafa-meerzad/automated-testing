@@ -56,6 +56,9 @@ app.delete("/api/users/:id", async (req, res) => {
   return res.send(user);
 });
 
-app.listen("3000", () => {
-  console.log("listening on port 3000");
+const server = app.listen("4000", () => {
+  console.log("listening on port 4000");
 });
+
+module.exports.User = User
+module.exports.server = server
