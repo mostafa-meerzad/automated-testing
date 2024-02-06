@@ -451,7 +451,175 @@ describe("notify customer", () => {
     lib.notifyCustomer({ customerId: 1 });
     expect(mail.send).toHaveBeenCalled(); // this matcher ensures that our mocked function will be called
     expect(mail.send).toHaveBeenCalledWith("test@test.com", "..."); // if the mocked function needs to receive the exact argument when called
-    
   });
 });
 ```
+
+## Integration-Testing
+
+Integration testing is the process of testing modules of an application with it's dependencies included to ensure
+the application works as expected.
+
+for testing **express** apps we use `supertest` package that allows us to make http requests to our server while testing:
+
+**Note**: try to follow this patter for organizing the test-suites when it comes to integration tests specially testing endpoints:
+
+```js
+describe("the/route", () => {
+  // this test-suite is for the specific endpoint
+  describe("METHOD/", () => {
+    // while this suite is for each method
+    // inside this all our assertions is going to reside
+  });
+});
+```
+
+### Organizing Test-Suites The Why/s
+
+The pattern of organizing tests using nested `describe` blocks in testing frameworks like Jest or Mocha is a powerful way to structure your tests. It allows you to create a hierarchy or grouping of tests that logically organizes them based on functionality, endpoints, methods, or any other criteria you find useful. This can significantly enhance the readability and maintainability of your test suite, especially as it grows in size and complexity.
+
+#### Benefits of Nested `describe` Blocks:
+
+1. **Logical Grouping**: You can group tests by functionality, making it easier to navigate the test suite. For instance, grouping all tests related to `GET` requests on the `/api/users/` endpoint together, as in your example, immediately tells anyone reading the tests the functionality being tested.
+
+2. **Setup and Teardown Scope**: Nested `describe` blocks allow you to apply `beforeEach`, `afterEach`, `beforeAll`, and `afterAll` hooks scoped to that block. This is incredibly useful for setting up preconditions or cleanup that are specific to a subset of tests.
+
+3. **Readable Test Output**: The hierarchical structure of nested `describe` blocks translates into a more readable and organized output when tests are run, making it easier to identify which parts of your application are affected by test failures.
+
+4. **Focused Testing**: With Jest and similar frameworks, you can run tests matching a specific `describe` block's name using test runner options. Nested blocks make it easier to focus on a specific area of your application during development or debugging.
+
+#### When to Use Nested `describe` Blocks:
+
+- **By Feature or Endpoint**: When testing a REST API or a complex application, you might group tests by endpoint or feature. For example, all tests for the `/api/users` endpoint can be under one `describe` block, with nested `describe` blocks for `GET`, `POST`, `PUT`, `DELETE`, etc.
+
+- **By Functionality**: For unit tests, you might group tests by the functionality or method being tested. Each method of a class or module could have its own `describe` block.
+
+#### Example Structure:
+
+```javascript
+describe("api/users", () => {
+  describe("GET /", () => {
+    // Setup specific to GET /api/users
+    beforeEach(() => {});
+
+    it("should return all users", async () => {
+      // Test implementation
+    });
+
+    // More GET tests...
+  });
+
+  describe("POST /", () => {
+    // Setup specific to POST /api/users
+    beforeEach(() => {});
+
+    it("should create a new user", async () => {
+      // Test implementation
+    });
+
+    // More POST tests...
+  });
+
+  // Additional nested describes for PUT, DELETE, etc.
+});
+```
+
+#### Single vs. Nested `describe` Blocks:
+
+- **Single `describe` Block**: Sufficient for very small modules or when you're testing a feature that doesn't have multiple logical subdivisions. It keeps things simple but can become unwieldy as the number of tests grows.
+
+- **Nested `describe` Blocks**: Better for most practical purposes, as they offer more organizational benefits, making your tests scalable and easier to manage over time.
+
+#### Conclusion:
+
+Nested `describe` blocks are generally preferred for their organizational benefits, especially in larger test suites. They offer a structured approach to arrange your tests in a logically grouped hierarchy, improving readability and maintainability. The choice between using single or nested `describe` blocks ultimately depends on the complexity and size of the feature or functionality being tested.
+
+### preparing the app for integration tests
+
+1. your app export `app.listen(PORT, CB)` this is a server object which will be used to connect to server in tests:
+
+```js
+const server = app.listen("4000", () => {
+  console.log("listening on port 4000");
+});
+
+module.exports = server;
+```
+
+2. import the server-object into your test-file:
+
+```js
+let server;
+
+describe("the/path/", () => {
+  describe("METHOD/", () => {
+    beforeEach(() => {
+      server = require("path/to/server-object");
+    });
+    afterEach(() => {
+      server.close();
+      await User.deleteMany({});
+    });
+     it("should return all users", async () => {
+      await User.insertMany([
+        { name: "User1", email: "user1@test.com" },
+        { name: "User2", email: "user2@test.com" },
+      ]);
+      const res = await request(server).get("/api/users");
+
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(2);
+    });
+  });
+});
+```
+
+**Note**: why to import server-object this way:
+
+when ever we make a change to the code **jest** will run test tests once again causing the server to be called again without closing it from the previous call and that leads to an **exception** to happen, to prevent this from happening we import the **server-object** in the `beforeEach` method and closing it in `afterEach` method these methods take a call-back and executes it before or after each test-case.
+
+**Note**: the other way
+
+```js
+const express = require("express");
+const app = express();
+
+// Define middleware, routes, etc.
+app.get("/api/users", (req, res) => {
+  // Example response, replace with actual logic
+  res.json([
+    { name: "User1", email: "user1@test.com" },
+    { name: "User2", email: "user2@test.com" },
+  ]);
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Listening on port ${port}...`));
+
+module.exports = app;
+```
+
+we only need to export the app itself not the running server
+
+```js
+const request = require("supertest");
+const { app } = require("path/to/app");
+
+describe("the/path", () => {
+  describe("METHOD/", () => {
+    it("should return all users", async () => {
+      await User.deleteMany({});
+      await User.insertMany([
+        { name: "User1", email: "user1@test.com" },
+        { name: "User2", email: "user2@test.com" },
+      ]);
+      const res = await request(app).get("/api/users");
+
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBe(2);
+    });
+  });
+});
+```
+
+in this approach we don't need to manually close the server after each test the **supertest** handles all this for us.
