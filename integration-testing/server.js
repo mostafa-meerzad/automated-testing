@@ -61,4 +61,5 @@ const server = app.listen("4000", () => {
 });
 
 module.exports.User = User
-module.exports.server = server
+// module.exports.server = server // one way to export the running server
+module.exports.app = app // better way of sharing the app object and let the supertest handle running the server

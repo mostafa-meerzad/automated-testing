@@ -623,3 +623,9 @@ describe("the/path", () => {
 ```
 
 in this approach we don't need to manually close the server after each test the **supertest** handles all this for us.
+
+**best practices**:
+
+1.  whenever we change the state of application (e.g, dataBase) clean-up after.
+2.  treat every test as if it is the ONLY test in your application
+
