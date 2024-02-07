@@ -37,6 +37,10 @@ app.get("/api/users", async (req, res) => {
 });
 
 app.get("/api/users/:id", async (req, res) => {
+
+  if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+    return res.status(404).send("invalid id")
+  }
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).send("no such user");
   return res.send(user);

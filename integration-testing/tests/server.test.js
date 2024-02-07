@@ -69,9 +69,14 @@ describe("api/users/", () => {
 
       const res = await request(app).get(`/api/users/${user._id}`);
       expect(res.status).toBe(200);
-      console.log(res.body)
       expect(res.body).toHaveProperty("name", user.name);
       expect(res.body).toHaveProperty("email", user.email);
+    });
+
+    it("should return 404 if invalid userID is provided", async () => {
+      const invalidId = 1;
+      const res = await request(app).get(`/api/users/${invalidId}`);
+      expect(res.status).toBe(404);
     });
   });
 });

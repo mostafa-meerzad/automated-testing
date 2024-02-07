@@ -629,3 +629,19 @@ in this approach we don't need to manually close the server after each test the 
 1.  whenever we change the state of application (e.g, dataBase) clean-up after.
 2.  treat every test as if it is the ONLY test in your application
 
+### testing 404 error
+
+when working with mongodb and mongoose validate the id otherwise the tests won't work
+
+```js
+app.get("/api/users/:id", async (req, res) => {
+  //---------------------
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(404).send("invalid id");
+  }
+  //---------------------
+  const user = await User.findById(req.params.id);
+  if (!user) return res.status(404).send("no such user");
+  return res.send(user);
+});
+```
