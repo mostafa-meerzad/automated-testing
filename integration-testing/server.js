@@ -55,11 +55,12 @@ app.delete("/api/users/:id", async (req, res) => {
   }
   return res.send(user);
 });
+const PORT = process.env.PORT || 3000;
 
-const server = app.listen("4000", () => {
-  console.log("listening on port 4000");
+app.listen(PORT, () => {
+  console.log("listening on port: ", PORT);
 });
 
-module.exports.User = User
+module.exports.User = User;
 // module.exports.server = server // one way to export the running server
-module.exports.app = app // better way of sharing the app object and let the supertest handle running the server
+module.exports.app = app; // better way of sharing the app object and let the supertest handle running the server

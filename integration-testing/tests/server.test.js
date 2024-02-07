@@ -45,9 +45,33 @@ describe("api/users/", () => {
       // too generic tests
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(2);
-      // better tests that can confirm we have the same users we just stored in DB 
-      expect(res.body.some((user) => user.name === "User1" )).toBeTruthy()
-      expect(res.body.some((user) => user.name === "User2" )).toBeTruthy()
+      // better tests that can confirm we have the same users we just stored in DB
+      expect(res.body.some((user) => user.name === "User1")).toBeTruthy();
+      expect(res.body.some((user) => user.name === "User2")).toBeTruthy();
+    });
+    it("should return an empty []", async () => {
+      const users = await User.find();
+      // console.log(users)
+      const res = await request(app).get("/api/users");
+      expect(res.body.length).toBe(0);
+    });
+  });
+
+  describe("GET/:id", () => {
+    afterEach(async () => {
+      await User.deleteMany({});
+    });
+
+    it("should return a user if valid userID is provided", async () => {
+      //todo: before doing anything populate the DB
+      const user = new User({ name: "user1", email: "user1@test.com" });
+      await user.save();
+
+      const res = await request(app).get(`/api/users/${user._id}`);
+      expect(res.status).toBe(200);
+      console.log(res.body)
+      expect(res.body).toHaveProperty("name", user.name);
+      expect(res.body).toHaveProperty("email", user.email);
     });
   });
 });
