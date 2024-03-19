@@ -462,7 +462,7 @@ the application works as expected.
 
 for testing **express** apps we use `supertest` package that allows us to make http requests to our server while testing:
 
-**Note**: try to follow this patter for organizing the test-suites when it comes to integration tests specially testing endpoints:
+**Note**: try to follow this pattern for organizing the test-suites when it comes to integration tests specially testing endpoints:
 
 ```js
 describe("the/route", () => {
@@ -478,13 +478,13 @@ describe("the/route", () => {
 
 The pattern of organizing tests using nested `describe` blocks in testing frameworks like Jest or Mocha is a powerful way to structure your tests. It allows you to create a hierarchy or grouping of tests that logically organizes them based on functionality, endpoints, methods, or any other criteria you find useful. This can significantly enhance the readability and maintainability of your test suite, especially as it grows in size and complexity.
 
-#### Benefits of Nested `describe` Blocks:
+#### Benefits of Nested `describe` Blocks
 
 1. **Logical Grouping**: You can group tests by functionality, making it easier to navigate the test suite. For instance, grouping all tests related to `GET` requests on the `/api/users/` endpoint together, as in your example, immediately tells anyone reading the tests the functionality being tested.
 
 2. **Setup and Teardown Scope**: Nested `describe` blocks allow you to apply `beforeEach`, `afterEach`, `beforeAll`, and `afterAll` hooks scoped to that block. This is incredibly useful for setting up preconditions or cleanup that are specific to a subset of tests.
 
-3. **Readable Test Output**: The hierarchical structure of nested `describe` blocks translates into a more readable and organized output when tests are run, making it easier to identify which parts of your application are affected by test failures.
+3. **Readable Test Output**: The hierarchical structure of nested `describe` blocks translates into a more readable and organized output when tests run, making it easier to identify which parts of your application are affected by test failures.
 
 4. **Focused Testing**: With Jest and similar frameworks, you can run tests matching a specific `describe` block's name using test runner options. Nested blocks make it easier to focus on a specific area of your application during development or debugging.
 
@@ -576,7 +576,7 @@ describe("the/path/", () => {
 
 **Note**: why to import server-object this way:
 
-when ever we make a change to the code **jest** will run test tests once again causing the server to be called again without closing it from the previous call and that leads to an **exception** to happen, to prevent this from happening we import the **server-object** in the `beforeEach` method and closing it in `afterEach` method these methods take a call-back and executes it before or after each test-case.
+when ever we make a change to the code **jest** will run tests once again causing the server to be called again without closing it from the previous call and that leads to an **exception** to happen, to prevent this from happening we import the **server-object** in the `beforeEach` method and closing it in `afterEach` method these methods take a call-back and executes it before or after each test-case.
 
 **Note**: the other way
 
@@ -645,3 +645,8 @@ app.get("/api/users/:id", async (req, res) => {
   return res.send(user);
 });
 ```
+
+## Code Test Coverage
+
+While writing tests for your app you might be wondering how much of your application code is covered by tests and that is where a **Code Coverage Tool** comes handy. here we'll use **jest** to test our code coverage. to start we need to add **--coverage** flag in our app's package.json file in **scripts** section like this: `"scripts": {"test": "jest --watchAll --verbose --coverage"},` then whenever we run `npm test` **jest** will generate a table showing how much of our application code is covered in tests.
+jest also generates a report file in html so we can view it in the browser and is cleaner and easier to understand, in the end we don't need to include code-coverage reports in our VCS since it is generated every-time we run **npm test**.
