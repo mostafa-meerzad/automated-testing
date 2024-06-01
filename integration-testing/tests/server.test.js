@@ -58,6 +58,9 @@ describe("api/users/", () => {
   });
 
   describe("GET/:id", () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+    });
     afterEach(async () => {
       await User.deleteMany({});
     });
@@ -77,6 +80,16 @@ describe("api/users/", () => {
       const invalidId = 1;
       const res = await request(app).get(`/api/users/${invalidId}`);
       expect(res.status).toBe(404);
+    }); 
+  });
+
+  describe("POST", () => {
+    afterEach(async () => {
+      await User.deleteMany({});
+    });
+    it("should return 401 error if client is not logged in", async () => {
+      const res = await request(app).post("/api/users").send({ key: "value" });
+      expect(res.status).toBe(200);
     });
   });
 });
