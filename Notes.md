@@ -645,3 +645,8 @@ app.get("/api/users/:id", async (req, res) => {
   return res.send(user);
 });
 ```
+
+## Code Test Coverage
+
+While writing tests for your app you might be wondering how much of your application code is covered by tests and that is where a **Code Coverage Tool** comes handy. here we'll use **jest** to test our code coverage. to start we need to add **--coverage** flag in our app's package.json file in **scripts** section like this: `"scripts": {"test": "jest --watchAll --verbose --coverage"},` then whenever we run `npm test` **jest** will generate a table showing how much of our application code is covered in tests.
+jest also generates a report file in html so we can view it in the browser and is cleaner and easier to understand, in the end we don't need to include code-coverage reports in our VCS since it is generated every-time we run **npm test**.

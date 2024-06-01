@@ -89,6 +89,7 @@ describe("api/users/", () => {
     });
     it("should return 401 error if client is not logged in", async () => {
       const res = await request(app).post("/api/users").send({ key: "value" });
+      console.log(res)
       expect(res.status).toBe(200);
     });
   });
