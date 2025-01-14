@@ -48,7 +48,7 @@ Tests a unit of an application without its **external dependencies**, i,e databa
 
 - cheap to write, you can write more test in less time
 - execute fast, you can execute a lot of unit-test in less time
-- doesn't give a lot of confidence, because your are testing your app without it's external dependencies it doesn't give confidence of your application working properly.
+- doesn't give a lot of confidence, because you are testing your app without it's external dependencies it doesn't give confidence of your application working properly.
 
 ### Integration Tests
 
@@ -71,7 +71,7 @@ Tests an application through it's UI. there are tools that drive the application
 
 ### Which kind fo these tests do we need to have in our application
 
-We need all of those test types in our application but the ration between **unit tests**, **integration tests** and **end-to-end tests** is different for each project.
+We need all of those test types in our application but the ratio between **unit tests**, **integration tests** and **end-to-end tests** is different for each project.
 
 there is a thing called testing-pyramid
 
@@ -121,7 +121,7 @@ These are just a few examples, and Jest has many more matchers that you can use 
 
 ### Grouping tests
 
-As we write more tests i becomes more and more confusing to to look at and try to figure out what is what, specially for other programmers.
+As we write more tests it becomes more and more confusing to look at and try to figure out what is what, specially for other programmers.
 
 ![first class citizens](./assets//testsAreFirstClassCitizens.png)
 
